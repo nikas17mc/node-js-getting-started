@@ -4,9 +4,10 @@ const app = express();
 const path = require('path');
 const fs = require('fs');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 const PORT = process.env.PORT || 5000;
 
-
+app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -58,4 +59,37 @@ app.get('/api/auth/user', (req, res) => {
             avatar: "https://www.mecallapi.com/users/1.png"
         }
     });
+});
+
+//JSON object to be added to cookie
+let users = {
+    name: "Nikas",
+    Age: "18"
+}
+
+//Route for adding cookie
+app.get('/setuser', (req, res) => {
+    res.cookie("userData", users);
+    res.send('user data added to cookie');
+});
+
+//Iterate users data from cookie
+app.get('/getuser', (req, res) => {
+    //shows all the cookies
+    res.send(req.cookies);
+});
+
+//Route for destroying cookie
+app.get('/logout', (req, res) => {
+    //it will clear the userData cookie
+    res.clearCookie('userData');
+    res.send('user logout successfully');
+});
+
+
+//server listens to port 3000
+app.listen(3000, (err) => {
+    if (err)
+        throw err;
+    console.log('listening on port 3000');
 });
